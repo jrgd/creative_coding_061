@@ -52,6 +52,7 @@
     // + to create a new element within the selected container
     // - to delete an element
     // ENTER to switch the contenteditable
+    var previous_chars_buffer = "";
 
     document.addEventListener('keydown', function(event){
 
@@ -96,6 +97,30 @@
         case "-":
           // remove the selected element
           break;
+
+        case "#":
+        case "t":
+          previous_chars_buffer += "#";
+          break;
+        case " ":
+          var how_many_levels = Math.min(7, previous_chars_buffer.length);
+          console.log("H"+how_many_levels+': '+previous_chars_buffer);
+
+          var insert_element = document.createElement("h"+how_many_levels);
+          insert_element_att = document.createAttribute("tabindex");
+          insert_element_att.value = "1";
+          insert_element.setAttributeNode(insert_element_att);
+          // random id
+          var random_id = btoa(Math.random().toString()).substr(10, 5);
+          insert_element_id = document.createAttribute("id");
+          insert_element_id.value = random_id;
+          insert_element.setAttributeNode(insert_element_id);
+          insert_element.innerHTML = 'A Title';
+          document.activeElement.appendChild(insert_element);
+
+          previous_chars_buffer = "";
+          break;
+
 
         case "Enter":
           if (document.activeElement.getAttribute("contenteditable") === null || document.activeElement.getAttribute("contenteditable") == 'false') {
