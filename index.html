@@ -117,20 +117,51 @@
           // remove the selected element
           break;
 
+        case "w":
+          previous_chars_buffer = 'w';
+          break;
+        case "h":
+          previous_chars_buffer = 'h';
+          break;
+
         case "ArrowUp":
-          move_element(0, -10);
+          if (previous_chars_buffer == 'w') {
+            resize_element(10, 0);
+          } else if (previous_chars_buffer == 'h') {
+            resize_element(0, 10);
+          } else {
+            move_element(0, -10);  
+          }
           break;
 
         case "ArrowDown":
-          move_element(0, 10);
+          if (previous_chars_buffer == 'w') {
+            resize_element(-10, 0);
+          } else if (previous_chars_buffer == 'h') {
+            resize_element(0, -10);
+          } else {
+            move_element(0, 10);
+          }
           break;
 
         case "ArrowLeft":
-          move_element(-10, 0);
+          if (previous_chars_buffer == 'w') {
+            resize_element(-1, 0);
+          } else if (previous_chars_buffer == 'h') {
+            resize_element(0, -1);
+          } else {
+            move_element(-10, 0);
+          }
           break;
 
         case "ArrowRight":
-          move_element(10, 0);
+          if (previous_chars_buffer == 'w') {
+            resize_element(1, 0);
+          } else if (previous_chars_buffer == 'h') {
+            resize_element(0, 1);
+          } else {
+            move_element(10, 0);
+          }
           break;
         case "f":
           document.activeElement.classList.remove('flexing');
@@ -203,15 +234,42 @@
       document.getElementById(data).style.top = pos_y+"px";
       
     }
+    function resize_element(add_x, add_y){
+      console.log(add_x, add_y);
+      var current_width = parseInt(window.getComputedStyle(document.activeElement, null).width);
+      if ( isNaN(current_width) ) { 
+        current_width = document.activeElement.getBoundingClientRect().width; 
+      }
+      var current_height = parseInt(window.getComputedStyle(document.activeElement, null).height);
+      if ( isNaN(current_height) ) { 
+        current_height = document.activeElement.getBoundingClientRect().height; 
+      }
+      var width = current_width + (add_x ) ; // removes the padding
+      var height = current_height + (add_y ) ;
+
+      var ele_id = document.activeElement.id;
+      document.getElementById(ele_id).style.width = width+"px";
+      document.getElementById(ele_id).style.height = height+"px";
+    }
     function move_element(add_x, add_y){
+      console.log('move element; '+(add_x, add_y));
       active_element = document.activeElement;
       if (active_element.classList.contains('free_float')){
-        pos_x = active_element.offsetLeft + add_x;
-        pos_y = active_element.offsetTop + add_y;
+        pos_x = getOffset(active_element).left + add_x;
+        pos_y = getOffset(active_element).top + add_y;
         active_element.style.left = pos_x+"px"; //first_container
         active_element.style.top = pos_y+"px";
       }
     }
+
+    function getOffset(el) {
+      const rect = el.getBoundingClientRect();
+      return {
+        left: rect.left + window.scrollX + 1, // adds 1 because of borders
+        top: rect.top + window.scrollY + 1    // adds 1 because of borders
+      };
+    }
+
   </script>
 </head>
 <body>
